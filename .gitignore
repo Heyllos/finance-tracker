@@ -1,0 +1,92 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# VSCode
+.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/*.code-snippets
+.history/
+*.code-workspace
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Env files
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+.envrc
+
+# -----------------------
+# Java / Spring Boot
+# -----------------------
+# Maven (keep wrapper files in VCS)
+target/
+
+# Gradle
+.gradle/
+build/
+!**/src/**/build/
+**/build/
+**/out/
+.gradle/6*/
+.gradle/7*/
+
+# IDE (Java)
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Lombok
+lombok.config
+
+# -----------------------
+# Node / Angular
+# -----------------------
+node_modules/
+
+# Angular build & cache
+.angular/
+.angular/cache/
+dist/
+coverage/
+.nyc_output/
+
+# Other JS bundlers / tools
+.cache/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.vite/
+.next/
+.nuxt/
+.svelte-kit/
+.astro/
+
+# TypeScript
+*.tsbuildinfo
+
+# -----------------------
+# Databases & data locales
+# -----------------------
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
