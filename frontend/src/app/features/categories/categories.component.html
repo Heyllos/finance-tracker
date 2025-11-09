@@ -1,0 +1,119 @@
+<div class="categories-container">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1>Mes Catégories</h1>
+      <p class="subtitle">Consultez vos catégories de transactions</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      mat-button 
+      [class.active]="selectedTab === 'all'"
+      (click)="selectTab('all')">
+      <mat-icon>category</mat-icon>
+      Toutes ({{ allCategories.length }})
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedTab === 'income'"
+      (click)="selectTab('income')">
+      <mat-icon>arrow_upward</mat-icon>
+      Revenus ({{ incomeCategories.length }})
+    </button>
+    <button 
+      mat-button 
+      [class.active]="selectedTab === 'expense'"
+      (click)="selectTab('expense')">
+      <mat-icon>arrow_downward</mat-icon>
+      Dépenses ({{ expenseCategories.length }})
+    </button>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des catégories...</p>
+  </div>
+
+  <!-- Grille de cartes -->
+  <div *ngIf="!loading" class="categories-grid">
+    <mat-card *ngFor="let category of getDisplayedCategories()" class="category-card">
+      <mat-card-content>
+        <!-- Icône et type -->
+        <div class="card-header">
+          <div class="icon-container" [style.background-color]="category.color || '#ccc'">
+            <mat-icon>{{ category.icon || 'category' }}</mat-icon>
+          </div>
+          <span class="type-badge" [ngClass]="getTypeClass(category.type)">
+            <mat-icon>{{ getTypeIcon(category.type) }}</mat-icon>
+            {{ getTypeLabel(category.type) }}
+          </span>
+        </div>
+
+        <!-- Nom -->
+        <h3 class="category-name">{{ category.name }}</h3>
+
+        <!-- Description -->
+        <p class="category-description" *ngIf="category.description">
+          {{ category.description }}
+        </p>
+        <p class="category-description no-description" *ngIf="!category.description">
+          Aucune description
+        </p>
+
+        <!-- Badge par défaut -->
+        <div class="footer">
+          <span class="default-badge" *ngIf="category.isDefault">
+            <mat-icon>verified</mat-icon>
+            Par défaut
+          </span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Message si aucune catégorie -->
+    <div *ngIf="getDisplayedCategories().length === 0" class="no-data">
+      <mat-icon>inbox</mat-icon>
+      <p>Aucune catégorie trouvée</p>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div *ngIf="!loading && allCategories.length > 0" class="stats-section">
+    <h2>Statistiques</h2>
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icon">category</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ allCategories.length }}</span>
+            <span class="stat-label">Total catégories</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card income">
+        <mat-card-content>
+          <mat-icon class="stat-icon">arrow_upward</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ incomeCategories.length }}</span>
+            <span class="stat-label">Catégories revenus</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card expense">
+        <mat-card-content>
+          <mat-icon class="stat-icon">arrow_downward</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ expenseCategories.length }}</span>
+            <span class="stat-label">Catégories dépenses</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

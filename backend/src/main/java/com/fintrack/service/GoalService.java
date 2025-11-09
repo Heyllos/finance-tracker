@@ -70,6 +70,7 @@ public class GoalService {
         goal.setPriority(request.getPriority());
         goal.setIcon(request.getIcon());
         goal.setColor(request.getColor());
+        goal.setAllocationPercentage(request.getAllocationPercentage());
         goal.setUser(user);
 
         Goal savedGoal = goalRepository.save(goal);
@@ -88,6 +89,7 @@ public class GoalService {
         goal.setPriority(request.getPriority());
         goal.setIcon(request.getIcon());
         goal.setColor(request.getColor());
+        goal.setAllocationPercentage(request.getAllocationPercentage());
 
         Goal updatedGoal = goalRepository.save(goal);
         return new GoalResponse(updatedGoal);

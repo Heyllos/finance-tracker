@@ -1,10 +1,23 @@
 .dashboard-container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .welcome-message {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 32px;
+  }
 }
 
-.dashboard-toolbar {
+.dashboard-toolbar-old {
   position: sticky;
   top: 0;
   z-index: 1000;

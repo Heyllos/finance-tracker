@@ -1,0 +1,74 @@
+::ng-deep .mat-mdc-dialog-content {
+  overflow-y: auto !important;
+  max-height: 70vh;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+::ng-deep .mat-dialog-content {
+  overflow-y: auto !important;
+  max-height: 70vh;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.budget-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+  min-width: 500px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .alert-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+
+    mat-checkbox {
+      margin-bottom: 8px;
+    }
+  }
+
+  mat-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .budget-form {
+    min-width: auto;
+
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+}

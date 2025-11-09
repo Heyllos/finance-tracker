@@ -18,12 +18,30 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { CommonModule } from '@angular/common';
 
 // Components
 import { AppComponent } from './app.component';
 import { LoginComponent } from './features/auth/login/login.component';
+import { RegisterComponent } from './features/auth/register/register.component';
+import { MainLayoutComponent } from './shared/components/main-layout/main-layout.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { TransactionsComponent } from './features/transactions/transactions.component';
+import { TransactionDialogComponent } from './features/transactions/transaction-dialog/transaction-dialog.component';
+import { BudgetsComponent } from './features/budgets/budgets.component';
+import { BudgetDialogComponent } from './features/budgets/budget-dialog/budget-dialog.component';
+import { CategoriesComponent } from './features/categories/categories.component';
+import { GoalsComponent } from './features/goals/goals.component';
+import { GoalDialogComponent } from './features/goals/goal-dialog/goal-dialog.component';
 
 // Interceptors
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
@@ -32,8 +50,16 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
   declarations: [
     AppComponent,
     LoginComponent,
+    RegisterComponent,
+    MainLayoutComponent,
     DashboardComponent,
-    TransactionsComponent
+    TransactionsComponent,
+    TransactionDialogComponent,
+    BudgetsComponent,
+    BudgetDialogComponent,
+    CategoriesComponent,
+    GoalsComponent,
+    GoalDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +77,17 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     MatProgressSpinnerModule,
     MatSidenavModule,
     MatListModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatMenuModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatChipsModule,
+    MatProgressBarModule,
+    MatCheckboxModule,
+    CommonModule
   ],
   providers: [
     {

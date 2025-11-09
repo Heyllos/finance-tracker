@@ -24,6 +24,7 @@ public class GoalResponse {
     private Boolean isArchived;
     private Boolean isCompleted;
     private Boolean isOverdue;
+    private BigDecimal allocationPercentage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime completedAt;
@@ -46,6 +47,7 @@ public class GoalResponse {
         this.isArchived = goal.getIsArchived();
         this.isCompleted = goal.isCompleted();
         this.isOverdue = goal.isOverdue();
+        this.allocationPercentage = goal.getAllocationPercentage();
         this.createdAt = goal.getCreatedAt();
         this.updatedAt = goal.getUpdatedAt();
         this.completedAt = goal.getCompletedAt();
@@ -88,4 +90,6 @@ public class GoalResponse {
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     public LocalDateTime getCompletedAt() { return completedAt; }
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
+    public BigDecimal getAllocationPercentage() { return allocationPercentage; }
+    public void setAllocationPercentage(BigDecimal allocationPercentage) { this.allocationPercentage = allocationPercentage; }
 }

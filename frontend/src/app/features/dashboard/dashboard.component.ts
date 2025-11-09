@@ -17,8 +17,4 @@ export class DashboardComponent implements OnInit {
       this.currentUser = user;
     });
   }
-
-  logout(): void {
-    this.authService.logout();
-  }
 }

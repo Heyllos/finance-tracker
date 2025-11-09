@@ -1,0 +1,51 @@
+<div class="main-layout">
+  <!-- Toolbar -->
+  <mat-toolbar color="primary" class="toolbar">
+    <span class="logo">
+      <mat-icon>account_balance_wallet</mat-icon>
+      FinTrack
+    </span>
+    <span class="spacer"></span>
+    <span class="user-info" *ngIf="currentUser">
+      <mat-icon>account_circle</mat-icon>
+      {{ currentUser.username }}
+    </span>
+    <button mat-icon-button (click)="logout()" matTooltip="Déconnexion">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <!-- Sidenav Container -->
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Sidenav -->
+    <mat-sidenav mode="side" opened class="sidenav">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Tableau de bord</span>
+        </a>
+        <a mat-list-item routerLink="/transactions" routerLinkActive="active">
+          <mat-icon matListItemIcon>receipt_long</mat-icon>
+          <span matListItemTitle>Transactions</span>
+        </a>
+        <a mat-list-item routerLink="/budgets" routerLinkActive="active">
+          <mat-icon matListItemIcon>account_balance_wallet</mat-icon>
+          <span matListItemTitle>Budgets</span>
+        </a>
+        <a mat-list-item routerLink="/goals" routerLinkActive="active">
+          <mat-icon matListItemIcon>flag</mat-icon>
+          <span matListItemTitle>Objectifs</span>
+        </a>
+        <a mat-list-item routerLink="/categories" routerLinkActive="active">
+          <mat-icon matListItemIcon>category</mat-icon>
+          <span matListItemTitle>Catégories</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main Content -->
+    <mat-sidenav-content class="main-content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

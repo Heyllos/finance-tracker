@@ -1,4 +1,128 @@
 <div class="transactions-container">
-  <h1>Transactions</h1>
-  <p>Liste des transactions à venir...</p>
+  <!-- Header -->
+  <div class="header">
+    <h1>Mes Transactions</h1>
+    <button mat-raised-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Nouvelle transaction
+    </button>
+  </div>
+
+  <!-- Barre de recherche -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Description, catégorie, commerçant...">
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des transactions...</p>
+  </div>
+
+  <!-- Tableau -->
+  <div *ngIf="!loading" class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="transactions-table">
+      
+      <!-- Date Column -->
+      <ng-container matColumnDef="transactionDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+        <td mat-cell *matCellDef="let transaction">
+          {{ transaction.transactionDate | date:'dd/MM/yyyy' }}
+        </td>
+      </ng-container>
+
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+        <td mat-cell *matCellDef="let transaction">
+          <div class="description-cell">
+            <strong>{{ transaction.description }}</strong>
+            <span *ngIf="transaction.notes" class="notes">{{ transaction.notes }}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Category Column -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Catégorie</th>
+        <td mat-cell *matCellDef="let transaction">
+          <mat-chip [style.background-color]="transaction.category.color || '#ccc'">
+            <mat-icon *ngIf="transaction.category.icon">{{ transaction.category.icon }}</mat-icon>
+            {{ transaction.category.name }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <!-- Type Column -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+        <td mat-cell *matCellDef="let transaction">
+          <span class="type-badge" [ngClass]="getTypeClass(transaction.type)">
+            <mat-icon>{{ transaction.type === TransactionType.INCOME ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ getTypeLabel(transaction.type) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Amount Column -->
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Montant</th>
+        <td mat-cell *matCellDef="let transaction">
+          <span class="amount" [ngClass]="getTypeClass(transaction.type)">
+            {{ transaction.type === TransactionType.INCOME ? '+' : '-' }}{{ transaction.amount | number:'1.2-2' }} €
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Merchant Column -->
+      <ng-container matColumnDef="merchant">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Commerçant</th>
+        <td mat-cell *matCellDef="let transaction">
+          {{ transaction.merchant || '-' }}
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let transaction">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditDialog(transaction)">
+              <mat-icon>edit</mat-icon>
+              <span>Modifier</span>
+            </button>
+            <button mat-menu-item (click)="deleteTransaction(transaction.id)">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Supprimer</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="transaction-row"></tr>
+
+      <!-- Message si aucune donnée -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <div class="no-data">
+            <mat-icon>inbox</mat-icon>
+            <p>Aucune transaction trouvée</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Pagination -->
+    <mat-paginator 
+      [pageSizeOptions]="[10, 25, 50, 100]"
+      showFirstLastButtons
+      aria-label="Sélectionner la page des transactions">
+    </mat-paginator>
+  </div>
 </div>
