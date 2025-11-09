@@ -74,6 +74,11 @@ public class Goal {
     @Column(nullable = false)
     private Boolean isArchived = false;
 
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0")
+    @Column(precision = 5, scale = 2)
+    private BigDecimal allocationPercentage; // Pourcentage d'épargne mensuelle allouée à cet objectif
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -195,6 +200,14 @@ public class Goal {
 
     public void setIsArchived(Boolean isArchived) {
         this.isArchived = isArchived;
+    }
+
+    public BigDecimal getAllocationPercentage() {
+        return allocationPercentage;
+    }
+
+    public void setAllocationPercentage(BigDecimal allocationPercentage) {
+        this.allocationPercentage = allocationPercentage;
     }
 
     public LocalDateTime getCreatedAt() {

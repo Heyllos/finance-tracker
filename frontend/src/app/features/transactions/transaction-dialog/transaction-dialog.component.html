@@ -1,0 +1,85 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Modifier la transaction' : 'Nouvelle transaction' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="transactionForm" class="transaction-form">
+    <!-- Type -->
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type">
+        <mat-option [value]="TransactionType.INCOME">
+          <mat-icon>arrow_upward</mat-icon>
+          Revenu
+        </mat-option>
+        <mat-option [value]="TransactionType.EXPENSE">
+          <mat-icon>arrow_downward</mat-icon>
+          Dépense
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="transactionForm.get('type')?.hasError('required')">Le type est requis</mat-error>
+    </mat-form-field>
+
+    <!-- Description -->
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description" placeholder="Ex: Courses au supermarché">
+      <mat-error *ngIf="transactionForm.get('description')?.hasError('required')">La description est requise</mat-error>
+      <mat-error *ngIf="transactionForm.get('description')?.hasError('minlength')">Minimum 2 caractères</mat-error>
+    </mat-form-field>
+
+    <!-- Montant et Date -->
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Montant</mat-label>
+        <input matInput type="number" formControlName="amount" step="0.01">
+        <span matSuffix>€</span>
+        <mat-error *ngIf="transactionForm.get('amount')?.hasError('required')">Le montant est requis</mat-error>
+        <mat-error *ngIf="transactionForm.get('amount')?.hasError('min')">Le montant doit être positif</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" formControlName="transactionDate">
+        <mat-error *ngIf="transactionForm.get('transactionDate')?.hasError('required')">La date est requise</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Catégorie -->
+    <mat-form-field appearance="outline">
+      <mat-label>Catégorie</mat-label>
+      <mat-select formControlName="categoryId">
+        <mat-option *ngFor="let category of categories" [value]="category.id">
+          <mat-icon *ngIf="category.icon">{{ category.icon }}</mat-icon>
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="transactionForm.get('categoryId')?.hasError('required')">La catégorie est requise</mat-error>
+    </mat-form-field>
+
+    <!-- Commerçant et Méthode de paiement -->
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Commerçant (optionnel)</mat-label>
+        <input matInput formControlName="merchant" placeholder="Ex: Carrefour">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Méthode de paiement (optionnel)</mat-label>
+        <input matInput formControlName="paymentMethod" placeholder="Ex: Carte bancaire">
+      </mat-form-field>
+    </div>
+
+    <!-- Notes -->
+    <mat-form-field appearance="outline">
+      <mat-label>Notes (optionnel)</mat-label>
+      <textarea matInput formControlName="notes" rows="3" placeholder="Informations complémentaires"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!transactionForm.valid || loading">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <span *ngIf="!loading">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+  </button>
+</mat-dialog-actions>

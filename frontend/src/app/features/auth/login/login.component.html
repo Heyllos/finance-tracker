@@ -55,6 +55,12 @@
           </mat-error>
         </mat-form-field>
 
+        <!-- Message de succès -->
+        <div *ngIf="successMessage" class="success-message">
+          <mat-icon>check_circle</mat-icon>
+          {{ successMessage }}
+        </div>
+
         <!-- Message d'erreur -->
         <mat-error *ngIf="errorMessage" class="error-message">
           <mat-icon>error</mat-icon>

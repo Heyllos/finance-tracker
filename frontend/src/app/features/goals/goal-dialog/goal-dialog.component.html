@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Modifier l\'objectif' : 'Nouvel objectif' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="goalForm" class="goal-form">
+    <!-- Nom -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nom de l'objectif</mat-label>
+      <input matInput formControlName="name" placeholder="Ex: Vacances d'été">
+      <mat-error *ngIf="goalForm.get('name')?.hasError('required')">Le nom est requis</mat-error>
+      <mat-error *ngIf="goalForm.get('name')?.hasError('minlength')">Minimum 2 caractères</mat-error>
+    </mat-form-field>
+
+    <!-- Description -->
+    <mat-form-field appearance="outline">
+      <mat-label>Description (optionnel)</mat-label>
+      <textarea matInput formControlName="description" rows="3" placeholder="Décrivez votre objectif..."></textarea>
+    </mat-form-field>
+
+    <!-- Montant cible et Date -->
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Montant cible</mat-label>
+        <input matInput type="number" formControlName="targetAmount" step="0.01">
+        <span matSuffix>€</span>
+        <mat-error *ngIf="goalForm.get('targetAmount')?.hasError('required')">Le montant est requis</mat-error>
+        <mat-error *ngIf="goalForm.get('targetAmount')?.hasError('min')">Le montant doit être positif</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date cible (optionnel)</mat-label>
+        <input matInput type="date" formControlName="targetDate">
+        <mat-hint>Date à laquelle vous souhaitez atteindre l'objectif</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <!-- Priorité et Allocation -->
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Priorité</mat-label>
+        <mat-select formControlName="priority">
+          <mat-option *ngFor="let priority of priorities" [value]="priority.value">
+            {{ priority.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Allocation mensuelle</mat-label>
+        <input matInput type="number" formControlName="allocationPercentage" min="0" max="100" step="1">
+        <span matSuffix>%</span>
+        <mat-hint>% d'épargne allouée à cet objectif chaque mois</mat-hint>
+        <mat-error *ngIf="goalForm.get('allocationPercentage')?.hasError('min')">Minimum 0%</mat-error>
+        <mat-error *ngIf="goalForm.get('allocationPercentage')?.hasError('max')">Maximum 100%</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Info sur l'allocation -->
+    <div class="info-box" *ngIf="goalForm.get('allocationPercentage')?.value">
+      <mat-icon>info</mat-icon>
+      <p>
+        <strong>{{ goalForm.get('allocationPercentage')?.value }}%</strong> de votre épargne mensuelle sera automatiquement allouée à cet objectif.
+      </p>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!goalForm.valid || loading">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <span *ngIf="!loading">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+  </button>
+</mat-dialog-actions>

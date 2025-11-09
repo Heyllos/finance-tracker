@@ -1,0 +1,160 @@
+<div class="goals-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Mes Objectifs</h1>
+    <button mat-raised-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Nouvel objectif
+    </button>
+  </div>
+
+  <!-- Barre de recherche -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Rechercher</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Nom, description, montant...">
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Chargement des objectifs...</p>
+  </div>
+
+  <!-- Tableau -->
+  <div *ngIf="!loading" class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="goals-table">
+      
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+        <td mat-cell *matCellDef="let goal">
+          <div class="name-cell">
+            <div class="icon-container" *ngIf="goal.icon" [style.background-color]="goal.color || '#1976d2'">
+              <mat-icon>{{ goal.icon }}</mat-icon>
+            </div>
+            <div>
+              <strong>{{ goal.name }}</strong>
+              <p class="description" *ngIf="goal.description">{{ goal.description }}</p>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Target Amount Column -->
+      <ng-container matColumnDef="target">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Objectif</th>
+        <td mat-cell *matCellDef="let goal">
+          <span class="amount">{{ goal.targetAmount | number:'1.2-2' }} €</span>
+        </td>
+      </ng-container>
+
+      <!-- Current Amount Column -->
+      <ng-container matColumnDef="current">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Épargné</th>
+        <td mat-cell *matCellDef="let goal">
+          <span class="amount current">{{ goal.currentAmount | number:'1.2-2' }} €</span>
+        </td>
+      </ng-container>
+
+      <!-- Progress Column -->
+      <ng-container matColumnDef="progress">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Progression</th>
+        <td mat-cell *matCellDef="let goal">
+          <div class="progress-cell">
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="goal.percentageAchieved > 100 ? 100 : goal.percentageAchieved"
+              [color]="getProgressColor(goal)">
+            </mat-progress-bar>
+            <span class="percentage" [ngClass]="getStatusClass(goal)">
+              {{ goal.percentageAchieved | number:'1.0-0' }}%
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Deadline Column -->
+      <ng-container matColumnDef="deadline">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Échéance</th>
+        <td mat-cell *matCellDef="let goal">
+          <span *ngIf="goal.targetDate" class="deadline" [class.overdue]="goal.isOverdue">
+            {{ goal.targetDate | date:'dd/MM/yyyy' }}
+          </span>
+          <span *ngIf="!goal.targetDate" class="no-deadline">Aucune</span>
+        </td>
+      </ng-container>
+
+      <!-- Allocation Column -->
+      <ng-container matColumnDef="allocation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Allocation</th>
+        <td mat-cell *matCellDef="let goal">
+          <span class="allocation" *ngIf="goal.allocationPercentage">
+            {{ goal.allocationPercentage | number:'1.0-0' }}%
+          </span>
+          <span class="no-allocation" *ngIf="!goal.allocationPercentage">-</span>
+        </td>
+      </ng-container>
+
+      <!-- Priority Column -->
+      <ng-container matColumnDef="priority">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Priorité</th>
+        <td mat-cell *matCellDef="let goal">
+          <span class="priority-badge" [ngClass]="getPriorityClass(goal.priority)">
+            {{ getPriorityLabel(goal.priority) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let goal">
+          <span class="status-badge" [ngClass]="getStatusClass(goal)">
+            {{ getStatusLabel(goal) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let goal">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditDialog(goal)">
+              <mat-icon>edit</mat-icon>
+              <span>Modifier</span>
+            </button>
+            <button mat-menu-item (click)="deleteGoal(goal.id)">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Supprimer</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="goal-row"></tr>
+
+      <!-- Message si aucune donnée -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <div class="no-data">
+            <mat-icon>flag</mat-icon>
+            <p>Aucun objectif trouvé</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Pagination -->
+    <mat-paginator 
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+      aria-label="Sélectionner la page des objectifs">
+    </mat-paginator>
+  </div>
+</div>

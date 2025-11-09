@@ -1,0 +1,64 @@
+::ng-deep .mat-mdc-dialog-content {
+  overflow-y: auto !important;
+  max-height: 70vh;
+  
+  /* Masquer la scrollbar mais garder le scroll */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE et Edge */
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
+
+/* Fallback pour anciennes versions */
+::ng-deep .mat-dialog-content {
+  overflow-y: auto !important;
+  max-height: 70vh;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.transaction-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+  min-width: 500px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  mat-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .transaction-form {
+    min-width: auto;
+
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+}

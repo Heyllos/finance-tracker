@@ -33,6 +33,10 @@ public class GoalRequest {
     @Size(max = 7)
     private String color;
 
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0")
+    private BigDecimal allocationPercentage;
+
     // Constructeurs
     public GoalRequest() {
     }
@@ -92,5 +96,13 @@ public class GoalRequest {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public BigDecimal getAllocationPercentage() {
+        return allocationPercentage;
+    }
+
+    public void setAllocationPercentage(BigDecimal allocationPercentage) {
+        this.allocationPercentage = allocationPercentage;
     }
 }

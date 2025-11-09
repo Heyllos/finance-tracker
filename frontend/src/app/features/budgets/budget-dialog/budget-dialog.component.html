@@ -1,0 +1,71 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Modifier le budget' : 'Nouveau budget' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="budgetForm" class="budget-form">
+    <!-- Nom -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nom du budget</mat-label>
+      <input matInput formControlName="name" placeholder="Ex: Alimentation mensuelle">
+      <mat-error *ngIf="budgetForm.get('name')?.hasError('required')">Le nom est requis</mat-error>
+      <mat-error *ngIf="budgetForm.get('name')?.hasError('minlength')">Minimum 2 caractères</mat-error>
+    </mat-form-field>
+
+    <!-- Catégorie -->
+    <mat-form-field appearance="outline">
+      <mat-label>Catégorie</mat-label>
+      <mat-select formControlName="categoryId">
+        <mat-option *ngFor="let category of categories" [value]="category.id">
+          <mat-icon *ngIf="category.icon">{{ category.icon }}</mat-icon>
+          {{ category.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="budgetForm.get('categoryId')?.hasError('required')">La catégorie est requise</mat-error>
+    </mat-form-field>
+
+    <!-- Montant -->
+    <mat-form-field appearance="outline">
+      <mat-label>Montant du budget</mat-label>
+      <input matInput type="number" formControlName="amount" step="0.01">
+      <span matSuffix>€</span>
+      <mat-error *ngIf="budgetForm.get('amount')?.hasError('required')">Le montant est requis</mat-error>
+      <mat-error *ngIf="budgetForm.get('amount')?.hasError('min')">Le montant doit être positif</mat-error>
+    </mat-form-field>
+
+    <!-- Période -->
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Date de début</mat-label>
+        <input matInput type="date" formControlName="startDate">
+        <mat-error *ngIf="budgetForm.get('startDate')?.hasError('required')">La date de début est requise</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date de fin</mat-label>
+        <input matInput type="date" formControlName="endDate">
+        <mat-error *ngIf="budgetForm.get('endDate')?.hasError('required')">La date de fin est requise</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Alertes -->
+    <div class="alert-section">
+      <mat-checkbox formControlName="alertEnabled">Activer les alertes</mat-checkbox>
+      
+      <mat-form-field appearance="outline" *ngIf="budgetForm.get('alertEnabled')?.value">
+        <mat-label>Seuil d'alerte</mat-label>
+        <input matInput type="number" formControlName="alertThreshold" min="0" max="100">
+        <span matSuffix>%</span>
+        <mat-hint>Vous serez alerté lorsque ce pourcentage sera atteint</mat-hint>
+        <mat-error *ngIf="budgetForm.get('alertThreshold')?.hasError('min')">Minimum 0%</mat-error>
+        <mat-error *ngIf="budgetForm.get('alertThreshold')?.hasError('max')">Maximum 100%</mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!budgetForm.valid || loading">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <span *ngIf="!loading">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+  </button>
+</mat-dialog-actions>
