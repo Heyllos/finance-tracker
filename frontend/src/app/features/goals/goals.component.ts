@@ -72,8 +72,7 @@ export class GoalsComponent implements OnInit {
         this.dataSource.data = goals;
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des objectifs:', error);
+      error: () => {
         this.loading = false;
       }
     });
@@ -120,9 +119,7 @@ export class GoalsComponent implements OnInit {
         next: () => {
           this.loadGoals();
         },
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-        }
+        error: () => {}
       });
     }
   }

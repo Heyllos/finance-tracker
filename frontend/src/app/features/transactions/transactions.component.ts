@@ -82,8 +82,7 @@ export class TransactionsComponent implements OnInit {
         this.dataSource.data = transactions;
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des transactions:', error);
+      error: () => {
         this.loading = false;
       }
     });
@@ -130,9 +129,7 @@ export class TransactionsComponent implements OnInit {
         next: () => {
           this.loadTransactions();
         },
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-        }
+        error: () => {}
       });
     }
   }

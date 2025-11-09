@@ -72,8 +72,7 @@ export class BudgetsComponent implements OnInit {
         this.dataSource.data = budgets;
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des budgets:', error);
+      error: () => {
         this.loading = false;
       }
     });
@@ -120,9 +119,7 @@ export class BudgetsComponent implements OnInit {
         next: () => {
           this.loadBudgets();
         },
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-        }
+        error: () => {}
       });
     }
   }

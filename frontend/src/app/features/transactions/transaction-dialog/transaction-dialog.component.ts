@@ -55,9 +55,7 @@ export class TransactionDialogComponent implements OnInit {
         next: (categories) => {
           this.categories = categories;
         },
-        error: (error) => {
-          console.error('Erreur lors du chargement des catégories:', error);
-        }
+        error: () => {}
       });
     }
   }
@@ -73,8 +71,7 @@ export class TransactionDialogComponent implements OnInit {
 
       operation.subscribe({
         next: () => this.dialogRef.close(true),
-        error: (error) => {
-          console.error('Erreur:', error);
+        error: () => {
           this.loading = false;
         }
       });

@@ -29,8 +29,7 @@ export class CategoriesComponent implements OnInit {
         this.expenseCategories = categories.filter(c => c.type === TransactionType.EXPENSE);
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des catégories:', error);
+      error: () => {
         this.loading = false;
       }
     });

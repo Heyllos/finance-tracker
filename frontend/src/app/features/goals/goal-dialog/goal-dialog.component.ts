@@ -50,8 +50,7 @@ export class GoalDialogComponent implements OnInit {
 
       operation.subscribe({
         next: () => this.dialogRef.close(true),
-        error: (error) => {
-          console.error('Erreur:', error);
+        error: () => {
           this.loading = false;
         }
       });
