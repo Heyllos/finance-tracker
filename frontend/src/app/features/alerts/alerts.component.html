@@ -37,44 +37,42 @@
   <!-- Liste des alertes -->
   <div *ngIf="!loading && filteredAlerts.length > 0" class="alerts-list">
     <mat-card *ngFor="let alert of filteredAlerts" 
-              class="alert-card"
-              [ngClass]="{
-                'unread': !alert.isRead,
-                [getSeverityClass(alert.severity)]: true
-              }">
+              [class.alert-card]="true"
+              [class.unread]="!alert.isRead"
+              [ngClass]="getSeverityClass(alert.severity)">
       
       <!-- Icône de sévérité -->
       <div class="alert-icon">
         <mat-icon [ngClass]="getSeverityClass(alert.severity)">
-          {{ getSeverityIcon(alert.severity) }}
+          {{getSeverityIcon(alert.severity)}}
         </mat-icon>
       </div>
 
       <!-- Contenu de l'alerte -->
       <div class="alert-content">
         <div class="alert-header">
-          <h3>{{ alert.title }}</h3>
+          <h3>{{alert.title}}</h3>
           <span class="alert-badge" [ngClass]="getSeverityClass(alert.severity)">
-            {{ getTypeLabel(alert.type) }}
+            {{getTypeLabel(alert.type)}}
           </span>
         </div>
 
-        <p class="alert-message">{{ alert.message }}</p>
+        <p class="alert-message">{{alert.message}}</p>
 
         <div class="alert-meta">
           <span class="alert-time">
             <mat-icon>schedule</mat-icon>
-            {{ getRelativeTime(alert.createdAt) }}
+            {{getRelativeTime(alert.createdAt)}}
           </span>
           
           <span *ngIf="alert.budgetCategoryName" class="alert-category">
             <mat-icon>category</mat-icon>
-            {{ alert.budgetCategoryName }}
+            {{alert.budgetCategoryName}}
           </span>
           
           <span *ngIf="alert.goalName" class="alert-goal">
             <mat-icon>flag</mat-icon>
-            {{ alert.goalName }}
+            {{alert.goalName}}
           </span>
         </div>
       </div>
