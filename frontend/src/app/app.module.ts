@@ -27,6 +27,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { CommonModule } from '@angular/common';
 
 // Components
@@ -42,6 +43,7 @@ import { BudgetDialogComponent } from './features/budgets/budget-dialog/budget-d
 import { CategoriesComponent } from './features/categories/categories.component';
 import { GoalsComponent } from './features/goals/goals.component';
 import { GoalDialogComponent } from './features/goals/goal-dialog/goal-dialog.component';
+import { AlertsComponent } from './features/alerts/alerts.component';
 
 // Interceptors
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
@@ -59,7 +61,8 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     BudgetDialogComponent,
     CategoriesComponent,
     GoalsComponent,
-    GoalDialogComponent
+    GoalDialogComponent,
+    AlertsComponent
   ],
   imports: [
     BrowserModule,
@@ -87,6 +90,7 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     MatChipsModule,
     MatProgressBarModule,
     MatCheckboxModule,
+    MatButtonToggleModule,
     CommonModule
   ],
   providers: [
