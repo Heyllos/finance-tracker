@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 // Routing
 import { AppRoutingModule } from './app-routing.module';
@@ -44,6 +44,8 @@ import { CategoriesComponent } from './features/categories/categories.component'
 import { GoalsComponent } from './features/goals/goals.component';
 import { GoalDialogComponent } from './features/goals/goal-dialog/goal-dialog.component';
 import { AlertsComponent } from './features/alerts/alerts.component';
+import { ForexComponent } from './features/forex/forex.component';
+import { CryptoComponent } from './features/crypto/crypto.component';
 
 // Interceptors
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
@@ -62,13 +64,16 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     CategoriesComponent,
     GoalsComponent,
     GoalDialogComponent,
-    AlertsComponent
+    AlertsComponent,
+    ForexComponent,
+    CryptoComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     AppRoutingModule,
     // Material Modules
     MatToolbarModule,

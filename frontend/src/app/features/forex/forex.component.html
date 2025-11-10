@@ -1,0 +1,103 @@
+<div class="forex-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>
+      <mat-icon>currency_exchange</mat-icon>
+      Taux de Change Forex
+    </h1>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="base-selector">
+        <mat-label>Devise de base</mat-label>
+        <mat-select [(ngModel)]="selectedBase" (selectionChange)="onBaseChange()">
+          <mat-option *ngFor="let currency of availableCurrencies" [value]="currency">
+            {{getFlag(currency)}} {{currency}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="refresh()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <mat-card class="info-card" *ngIf="exchangeRates && !loading">
+    <mat-card-content>
+      <div class="info-content">
+        <div class="info-item">
+          <mat-icon>schedule</mat-icon>
+          <span>Dernière mise à jour : {{exchangeRates.timestamp | date:'short'}}</span>
+        </div>
+        <div class="info-item">
+          <mat-icon>cached</mat-icon>
+          <span>Les données sont mises en cache pendant 1 heure</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des taux de change...</p>
+  </div>
+
+  <!-- Table des taux -->
+  <mat-card *ngIf="!loading && displayedCurrencies.length > 0" class="rates-card">
+    <mat-card-header>
+      <mat-card-title>
+        Taux de change pour 1 {{selectedBase}}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="displayedCurrencies" class="rates-table">
+        
+        <!-- Colonne Devise -->
+        <ng-container matColumnDef="currency">
+          <th mat-header-cell *matHeaderCellDef>Devise</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="currency-cell">
+              <span class="flag">{{getFlag(element.code)}}</span>
+              <div class="currency-info">
+                <strong>{{element.code}}</strong>
+                <span class="currency-name">{{element.name}}</span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Colonne Taux -->
+        <ng-container matColumnDef="rate">
+          <th mat-header-cell *matHeaderCellDef>Taux</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="rate-value">{{element.rate | number:'1.2-4'}}</span>
+          </td>
+        </ng-container>
+
+        <!-- Colonne Conversion -->
+        <ng-container matColumnDef="conversion">
+          <th mat-header-cell *matHeaderCellDef>Conversion</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="conversion-text">
+              1 {{selectedBase}} = {{element.rate | number:'1.2-4'}} {{element.code}}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['currency', 'rate', 'conversion']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['currency', 'rate', 'conversion'];"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && displayedCurrencies.length === 0" class="empty-state">
+    <mat-icon>currency_exchange</mat-icon>
+    <h2>Aucun taux de change disponible</h2>
+    <button mat-raised-button color="primary" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+      Réessayer
+    </button>
+  </div>
+</div>
