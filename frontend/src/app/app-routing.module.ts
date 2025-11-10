@@ -8,6 +8,7 @@ import { TransactionsComponent } from './features/transactions/transactions.comp
 import { BudgetsComponent } from './features/budgets/budgets.component';
 import { CategoriesComponent } from './features/categories/categories.component';
 import { GoalsComponent } from './features/goals/goals.component';
+import { AlertsComponent } from './features/alerts/alerts.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
@@ -23,7 +24,8 @@ const routes: Routes = [
       { path: 'transactions', component: TransactionsComponent },
       { path: 'budgets', component: BudgetsComponent },
       { path: 'goals', component: GoalsComponent },
-      { path: 'categories', component: CategoriesComponent }
+      { path: 'categories', component: CategoriesComponent },
+      { path: 'alerts', component: AlertsComponent }
     ]
   },
   { path: '**', redirectTo: '/dashboard' }
