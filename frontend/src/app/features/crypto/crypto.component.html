@@ -1,0 +1,115 @@
+<div class="crypto-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>
+      <mat-icon>currency_bitcoin</mat-icon>
+      Cours des Crypto-monnaies
+    </h1>
+    <button mat-raised-button color="primary" (click)="refresh()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon>
+      Actualiser
+    </button>
+  </div>
+
+  <!-- Info -->
+  <mat-card class="info-card" *ngIf="cryptoPrices.length > 0 && !loading">
+    <mat-card-content>
+      <div class="info-content">
+        <div class="info-item">
+          <mat-icon>schedule</mat-icon>
+          <span>Dernière mise à jour : {{cryptoPrices[0]?.timestamp | date:'short'}}</span>
+        </div>
+        <div class="info-item">
+          <mat-icon>cached</mat-icon>
+          <span>Les données sont mises en cache pendant 1 heure</span>
+        </div>
+        <div class="info-item">
+          <mat-icon>info</mat-icon>
+          <span>Source : CoinGecko API</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des cours des crypto-monnaies...</p>
+  </div>
+
+  <!-- Table des cryptos -->
+  <mat-card *ngIf="!loading && cryptoPrices.length > 0" class="crypto-card">
+    <mat-card-header>
+      <mat-card-title>
+        Top Crypto-monnaies
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="cryptoPrices" class="crypto-table">
+        
+        <!-- Colonne Symbol -->
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell *matHeaderCellDef>Symbole</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="symbol-cell">
+              <span class="crypto-icon">{{getCryptoIcon(element.symbol)}}</span>
+              <strong>{{element.symbol}}</strong>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Colonne Name -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nom</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="crypto-name">{{element.name}}</span>
+          </td>
+        </ng-container>
+
+        <!-- Colonne Prix USD -->
+        <ng-container matColumnDef="priceUsd">
+          <th mat-header-cell *matHeaderCellDef>Prix (USD)</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="price-value">
+              ${{element.priceUsd | number:'1.2-2'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Colonne Prix EUR -->
+        <ng-container matColumnDef="priceEur">
+          <th mat-header-cell *matHeaderCellDef>Prix (EUR)</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="price-value">
+              €{{element.priceEur | number:'1.2-2'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Colonne Variation 24h -->
+        <ng-container matColumnDef="change24h">
+          <th mat-header-cell *matHeaderCellDef>Variation 24h</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="change-cell" [ngClass]="getChangeClass(element.changePercent24h)">
+              <mat-icon>{{getChangeIcon(element.changePercent24h)}}</mat-icon>
+              <span>{{element.changePercent24h | number:'1.2-2'}}%</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && cryptoPrices.length === 0" class="empty-state">
+    <mat-icon>currency_bitcoin</mat-icon>
+    <h2>Aucune donnée disponible</h2>
+    <button mat-raised-button color="primary" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+      Réessayer
+    </button>
+  </div>
+</div>

@@ -9,6 +9,8 @@ import { BudgetsComponent } from './features/budgets/budgets.component';
 import { CategoriesComponent } from './features/categories/categories.component';
 import { GoalsComponent } from './features/goals/goals.component';
 import { AlertsComponent } from './features/alerts/alerts.component';
+import { ForexComponent } from './features/forex/forex.component';
+import { CryptoComponent } from './features/crypto/crypto.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
@@ -25,7 +27,9 @@ const routes: Routes = [
       { path: 'budgets', component: BudgetsComponent },
       { path: 'goals', component: GoalsComponent },
       { path: 'categories', component: CategoriesComponent },
-      { path: 'alerts', component: AlertsComponent }
+      { path: 'alerts', component: AlertsComponent },
+      { path: 'forex', component: ForexComponent },
+      { path: 'crypto', component: CryptoComponent }
     ]
   },
   { path: '**', redirectTo: '/dashboard' }

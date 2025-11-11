@@ -88,6 +88,18 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- WebFlux pour WebClient (Appels API externes) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <!-- Spring Cache (Mise en cache) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
         <!-- Spring Boot DevTools (Rechargement automatique en dev) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
