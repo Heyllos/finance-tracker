@@ -1,8 +1,10 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
 
 // Routing
 import { AppRoutingModule } from './app-routing.module';
@@ -47,9 +49,13 @@ import { AlertsComponent } from './features/alerts/alerts.component';
 import { ForexComponent } from './features/forex/forex.component';
 import { CryptoComponent } from './features/crypto/crypto.component';
 import { StocksComponent } from './features/stocks/stocks.component';
+import { CurrencyConverterComponent } from './shared/components/currency-converter/currency-converter.component';
 
 // Interceptors
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+
+// Enregistrer le locale français
+registerLocaleData(localeFr);
 
 @NgModule({
   declarations: [
@@ -68,7 +74,8 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     AlertsComponent,
     ForexComponent,
     CryptoComponent,
-    StocksComponent
+    StocksComponent,
+    CurrencyConverterComponent
   ],
   imports: [
     BrowserModule,
@@ -105,6 +112,10 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
       multi: true
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'fr-FR'
     }
   ],
   bootstrap: [AppComponent]

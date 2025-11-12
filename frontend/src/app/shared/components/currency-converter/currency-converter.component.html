@@ -1,0 +1,94 @@
+<div class="converter-container" [class.open]="isOpen">
+  <!-- Bouton toggle -->
+  <button 
+    mat-fab 
+    class="toggle-button" 
+    (click)="togglePanel()"
+    [attr.aria-label]="isOpen ? 'Fermer le convertisseur' : 'Ouvrir le convertisseur'"
+    matTooltip="{{ isOpen ? 'Fermer' : 'Convertisseur' }}"
+    matTooltipPosition="left">
+    <mat-icon>{{ isOpen ? 'close' : 'currency_exchange' }}</mat-icon>
+  </button>
+
+  <!-- Panneau de conversion -->
+  <div class="converter-panel" *ngIf="isOpen">
+    <div class="panel-header">
+      <h3>
+        <mat-icon>currency_exchange</mat-icon>
+        Convertisseur
+      </h3>
+    </div>
+
+    <div class="panel-content">
+      <!-- Montant -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Montant</mat-label>
+        <input 
+          matInput 
+          type="number" 
+          [(ngModel)]="amount" 
+          (ngModelChange)="convert()"
+          min="0"
+          step="0.01">
+        <mat-icon matPrefix>payments</mat-icon>
+      </mat-form-field>
+
+      <!-- De -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>De</mat-label>
+        <mat-select [(ngModel)]="fromCurrency" (ngModelChange)="convert()">
+          <mat-option *ngFor="let currency of currencies" [value]="currency.code">
+            <span *ngIf="type === 'forex'">{{ currency.flag || '' }} {{ currency.code }} - {{ currency.name }}</span>
+            <span *ngIf="type === 'crypto'">{{ currency.icon || '' }} {{ currency.code }} - {{ currency.name }}</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Bouton swap -->
+      <div class="swap-container">
+        <button 
+          mat-icon-button 
+          color="primary" 
+          (click)="swapCurrencies()"
+          matTooltip="Inverser les devises">
+          <mat-icon>swap_vert</mat-icon>
+        </button>
+      </div>
+
+      <!-- Vers -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Vers</mat-label>
+        <mat-select [(ngModel)]="toCurrency" (ngModelChange)="convert()">
+          <mat-option *ngFor="let currency of currencies" [value]="currency.code">
+            <span *ngIf="type === 'forex'">{{ currency.flag || '' }} {{ currency.code }} - {{ currency.name }}</span>
+            <span *ngIf="type === 'crypto'">{{ currency.icon || '' }} {{ currency.code }} - {{ currency.name }}</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Résultat -->
+      <div class="result-container">
+        <div class="result-label">Résultat</div>
+        <div class="result-value" *ngIf="!loading">
+          <span class="from-amount">{{ amount | number:'1.2-8':'fr-FR' }} {{ getCurrencyDisplay(fromCurrency) }}</span>
+          <mat-icon class="equals-icon">drag_handle</mat-icon>
+          <span class="to-amount">{{ result | number:'1.2-8':'fr-FR' }} {{ getCurrencyDisplay(toCurrency) }}</span>
+        </div>
+        <div class="result-loading" *ngIf="loading">
+          <mat-spinner diameter="24"></mat-spinner>
+        </div>
+      </div>
+
+      <!-- Bouton refresh -->
+      <button 
+        mat-stroked-button 
+        color="primary" 
+        class="full-width refresh-button"
+        (click)="convert()"
+        [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+    </div>
+  </div>
+</div>
