@@ -1,0 +1,683 @@
+.stocks-container {
+  padding: 24px;
+  max-width: 1800px;
+  margin: 0 auto;
+
+  // Header section
+  .header-section {
+    margin-bottom: 24px;
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+
+      h1 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-size: 28px;
+        font-weight: 500;
+        color: #333;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+          color: #2196f3;
+        }
+      }
+    }
+
+    .search-card {
+      .search-form {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+
+        .symbol-input {
+          flex: 1;
+          min-width: 200px;
+        }
+
+        .interval-select {
+          min-width: 150px;
+        }
+
+        .date-input {
+          min-width: 160px;
+        }
+
+        .load-button {
+          height: 56px;
+          padding: 0 24px;
+
+          mat-icon {
+            margin-right: 8px;
+          }
+        }
+      }
+
+      .quick-access {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #e0e0e0;
+
+        .favorites, .popular-symbols {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          flex-wrap: wrap;
+
+          .label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+            color: #666;
+            margin-right: 8px;
+
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+            }
+          }
+
+          .quick-chip {
+            min-width: 60px;
+            font-weight: 500;
+          }
+
+          .favorite-chip {
+            border-color: #ff9800;
+            color: #ff9800;
+          }
+        }
+      }
+    }
+  }
+
+  // Error
+  .error-card {
+    margin-bottom: 24px;
+    background-color: #ffebee;
+
+    .error-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #c62828;
+
+      mat-icon {
+        font-size: 24px;
+      }
+    }
+  }
+
+  // Loading
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    gap: 16px;
+
+    p {
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  // Main layout: 2 columns
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 24px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+    }
+
+    // Left column: Charts and indicators
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      // Price card
+      .price-card {
+        .price-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 24px;
+
+          .company-info {
+            flex: 1;
+
+            h2 {
+              margin: 0 0 8px 0;
+              font-size: 32px;
+              font-weight: 600;
+              color: #333;
+            }
+
+            .company-name {
+              margin: 0 0 4px 0;
+              font-size: 16px;
+              color: #666;
+            }
+
+            .sector {
+              margin: 0;
+              font-size: 14px;
+              color: #999;
+            }
+          }
+
+          .price-info {
+            text-align: right;
+
+            .current-price {
+              font-size: 36px;
+              font-weight: 700;
+              color: #2196f3;
+              margin-bottom: 8px;
+            }
+
+            .price-change {
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              gap: 4px;
+              font-size: 18px;
+              font-weight: 600;
+              margin-bottom: 4px;
+
+              &.positive {
+                color: #4caf50;
+              }
+
+              &.negative {
+                color: #f44336;
+              }
+
+              mat-icon {
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+              }
+            }
+
+            .last-updated {
+              font-size: 12px;
+              color: #999;
+            }
+          }
+        }
+      }
+
+      // Avertissement principal pour les données de démo
+      .demo-warning-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+        margin-bottom: 24px;
+        background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+        border-left: 6px solid #fbc02d;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(251, 192, 45, 0.2);
+        color: #f57f17;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+          flex-shrink: 0;
+          color: #fbc02d;
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        div {
+          flex: 1;
+
+          strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #f57f17;
+          }
+
+          p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #795548;
+          }
+        }
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      // Chart card
+      .chart-card {
+        mat-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .chart-controls {
+            mat-button-toggle-group {
+              height: 36px;
+
+              mat-button-toggle {
+                mat-icon {
+                  font-size: 18px;
+                  width: 18px;
+                  height: 18px;
+                  margin-right: 4px;
+                }
+              }
+            }
+          }
+        }
+
+        .chart-container {
+          position: relative;
+          height: 400px;
+          padding: 16px 0;
+        }
+      }
+
+      // Indicators section
+      .indicators-section {
+        h3 {
+          margin: 0 0 16px 0;
+          font-size: 20px;
+          font-weight: 500;
+          color: #333;
+        }
+
+        .indicator-card {
+          margin-bottom: 16px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+
+            h4 {
+              margin: 0;
+              font-size: 16px;
+              font-weight: 600;
+              color: #333;
+            }
+
+            .indicator-actions {
+              display: flex;
+              align-items: center;
+              gap: 12px;
+
+              .indicator-value {
+                font-size: 24px;
+                font-weight: 700;
+                color: #2196f3;
+              }
+
+              button {
+                mat-icon {
+                  color: #2196f3;
+                }
+
+                &:disabled {
+                  opacity: 0.5;
+                }
+              }
+            }
+          }
+
+          .demo-warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #fff9c4;
+            border-left: 4px solid #fbc02d;
+            border-radius: 8px;
+            color: #f57f17;
+
+            mat-icon {
+              font-size: 24px;
+              width: 24px;
+              height: 24px;
+              flex-shrink: 0;
+              color: #fbc02d;
+            }
+
+            div {
+              flex: 1;
+
+              strong {
+                display: block;
+                margin-bottom: 4px;
+                font-size: 14px;
+                color: #f57f17;
+              }
+
+              p {
+                margin: 0;
+                font-size: 13px;
+                line-height: 1.5;
+                color: #795548;
+              }
+            }
+          }
+
+          .indicator-unavailable {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background-color: #fff3e0;
+            border-radius: 8px;
+            color: #e65100;
+
+            mat-icon {
+              font-size: 20px;
+              width: 20px;
+              height: 20px;
+              flex-shrink: 0;
+            }
+
+            p {
+              margin: 0;
+              font-size: 13px;
+              line-height: 1.5;
+            }
+          }
+
+          // RSI bar
+          .indicator-bar {
+            margin-bottom: 12px;
+
+            .bar-background {
+              position: relative;
+              height: 24px;
+              background: linear-gradient(to right, #4caf50 0%, #4caf50 30%, #ffc107 30%, #ffc107 70%, #f44336 70%, #f44336 100%);
+              border-radius: 12px;
+              overflow: hidden;
+
+              .bar-fill {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                background: rgba(33, 150, 243, 0.3);
+                border-right: 3px solid #2196f3;
+                transition: width 0.3s ease;
+              }
+
+              .bar-markers {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+
+                .marker {
+                  position: absolute;
+                  font-size: 10px;
+                  font-weight: 600;
+                  color: white;
+                  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                  transform: translateX(-50%);
+                }
+              }
+            }
+          }
+
+          // MACD values
+          .macd-values {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+
+            .macd-item {
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+
+              .label {
+                font-size: 11px;
+                color: #999;
+                text-transform: uppercase;
+                font-weight: 600;
+              }
+
+              .value {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+
+                &.positive {
+                  color: #4caf50;
+                }
+
+                &.negative {
+                  color: #f44336;
+                }
+              }
+            }
+          }
+
+          // Signal badge
+          .indicator-signal {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .signal-badge {
+              display: inline-block;
+              padding: 4px 12px;
+              border-radius: 12px;
+              font-size: 12px;
+              font-weight: 700;
+              text-transform: uppercase;
+              width: fit-content;
+
+              &.positive {
+                background-color: #e8f5e9;
+                color: #2e7d32;
+              }
+
+              &.negative {
+                background-color: #ffebee;
+                color: #c62828;
+              }
+
+              &.neutral {
+                background-color: #fff3e0;
+                color: #ef6c00;
+              }
+            }
+
+            .signal-description {
+              font-size: 13px;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+
+    // Right column: Fundamentals
+    .right-column {
+      .fundamentals-card {
+        position: sticky;
+        top: 24px;
+        max-height: calc(100vh - 48px);
+        overflow-y: auto;
+
+        mat-card-header {
+          mat-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            mat-icon {
+              color: #2196f3;
+            }
+          }
+        }
+
+        .loading-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          padding: 24px;
+
+          p {
+            margin: 0;
+            color: #666;
+          }
+        }
+
+        .metrics-container {
+          .metric-section {
+            padding: 16px 0;
+
+            &:first-child {
+              padding-top: 0;
+            }
+
+            h4 {
+              margin: 0 0 12px 0;
+              font-size: 14px;
+              font-weight: 600;
+              color: #666;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .metric-grid {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 12px;
+
+              .metric-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                &.full-width {
+                  grid-column: 1 / -1;
+                }
+
+                .metric-label {
+                  font-size: 11px;
+                  color: #999;
+                  text-transform: uppercase;
+                  font-weight: 600;
+                }
+
+                .metric-value {
+                  font-size: 16px;
+                  font-weight: 600;
+                  color: #333;
+                }
+              }
+            }
+          }
+
+          mat-divider {
+            margin: 8px 0;
+          }
+        }
+
+        .no-data {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          padding: 48px 24px;
+          color: #999;
+
+          mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+          }
+
+          p {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .stocks-container {
+    padding: 16px;
+
+    .search-card {
+      .search-form {
+        flex-direction: column;
+
+        .symbol-input,
+        .interval-select,
+        .load-button {
+          width: 100%;
+        }
+      }
+
+      .popular-symbols {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .symbol-chip {
+          width: 100%;
+        }
+      }
+    }
+
+    .data-container {
+      .info-card .stock-info {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .chart-card .chart-container {
+        height: 300px;
+      }
+    }
+  }
+}

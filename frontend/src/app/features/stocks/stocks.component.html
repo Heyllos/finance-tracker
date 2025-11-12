@@ -1,0 +1,448 @@
+<div class="stocks-container">
+  <!-- Header avec recherche -->
+  <div class="header-section">
+    <div class="header-top">
+      <h1>
+        <mat-icon>show_chart</mat-icon>
+        Analyse Boursière
+      </h1>
+      <button mat-icon-button 
+              (click)="toggleFavorite()" 
+              [color]="isFavorite() ? 'warn' : 'default'"
+              matTooltip="{{isFavorite() ? 'Retirer des favoris' : 'Ajouter aux favoris'}}">
+        <mat-icon>{{isFavorite() ? 'star' : 'star_border'}}</mat-icon>
+      </button>
+    </div>
+
+    <!-- Barre de recherche -->
+    <mat-card class="search-card">
+      <mat-card-content>
+        <div class="search-form">
+          <mat-form-field appearance="outline" class="symbol-input">
+            <mat-label>Symbole boursier</mat-label>
+            <input matInput 
+                   [(ngModel)]="symbol" 
+                   placeholder="Ex: AAPL, TSLA, MSFT"
+                   (keyup.enter)="loadAllData()"
+                   [disabled]="loading">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="interval-select">
+            <mat-label>Intervalle</mat-label>
+            <mat-select [(ngModel)]="selectedInterval" [disabled]="loading">
+              <mat-option *ngFor="let interval of intervals" [value]="interval.value">
+                {{interval.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="date-input" *ngIf="selectedInterval === 'daily'">
+            <mat-label>Date début</mat-label>
+            <input matInput 
+                   type="date" 
+                   [(ngModel)]="startDate"
+                   [disabled]="loading">
+            <mat-icon matSuffix>calendar_today</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="date-input" *ngIf="selectedInterval === 'daily'">
+            <mat-label>Date fin</mat-label>
+            <input matInput 
+                   type="date" 
+                   [(ngModel)]="endDate"
+                   [disabled]="loading">
+            <mat-icon matSuffix>calendar_today</mat-icon>
+          </mat-form-field>
+
+          <button mat-raised-button 
+                  color="primary" 
+                  (click)="loadAllData()" 
+                  [disabled]="loading"
+                  class="load-button">
+            <mat-icon>refresh</mat-icon>
+            Analyser
+          </button>
+        </div>
+
+        <!-- Favoris et symboles populaires -->
+        <div class="quick-access">
+          <div class="favorites" *ngIf="favorites.length > 0">
+            <span class="label"><mat-icon>star</mat-icon> Favoris :</span>
+            <button mat-stroked-button 
+                    *ngFor="let fav of favorites" 
+                    (click)="selectSymbol(fav)"
+                    [disabled]="loading"
+                    class="quick-chip favorite-chip">
+              {{fav}}
+            </button>
+          </div>
+          <div class="popular-symbols">
+            <span class="label">Populaires :</span>
+            <button mat-button 
+                    *ngFor="let stock of popularSymbols" 
+                    (click)="selectSymbol(stock.symbol)"
+                    [disabled]="loading"
+                    class="quick-chip">
+              {{stock.symbol}}
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Erreur -->
+  <mat-card *ngIf="error && !loading" class="error-card">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon color="warn">error</mat-icon>
+        <span>{{error}}</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des données boursières...</p>
+  </div>
+
+  <!-- Layout principal : 2 colonnes -->
+  <div *ngIf="stockData && !loading" class="main-layout">
+    
+    <!-- Colonne gauche : Graphiques -->
+    <div class="left-column">
+      
+      <!-- Prix actuel et variation -->
+      <mat-card class="price-card">
+        <mat-card-content>
+          <div class="price-header">
+            <div class="company-info">
+              <h2>{{stockData.symbol}}</h2>
+              <p class="company-name" *ngIf="companyOverview">{{companyOverview.name}}</p>
+              <p class="sector" *ngIf="companyOverview">{{companyOverview.sector}} • {{companyOverview.industry}}</p>
+            </div>
+            <div class="price-info">
+              <div class="current-price" *ngIf="stockData.timeSeries.length > 0">
+                ${{stockData.timeSeries[stockData.timeSeries.length - 1].close | number:'1.2-2'}}
+              </div>
+              <div class="price-change" *ngIf="getPriceChange()" [ngClass]="getChangeClass()">
+                <mat-icon>{{getPriceChange()!.value >= 0 ? 'trending_up' : 'trending_down'}}</mat-icon>
+                {{getPriceChange()!.value >= 0 ? '+' : ''}}{{getPriceChange()!.value | number:'1.2-2'}}
+                ({{getPriceChange()!.percentage | number:'1.2-2'}}%)
+              </div>
+              <div class="last-updated">{{stockData.lastRefreshed}}</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Avertissement données de démo pour le graphique -->
+      <div *ngIf="stockData.isDemo" class="demo-warning-main">
+        <mat-icon>warning</mat-icon>
+        <div>
+          <strong>🎭 Données de démonstration</strong>
+          <p>Alpha Vantage a atteint sa limite de requêtes. Les données de prix affichées sont des exemples réalistes générés pour {{stockData.symbol}}.</p>
+        </div>
+      </div>
+
+      <!-- Graphique principal -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Graphique des Prix</mat-card-title>
+          <div class="chart-controls">
+            <mat-button-toggle-group [(value)]="chartType" (change)="changeChartType($event.value)">
+              <mat-button-toggle value="line">
+                <mat-icon>show_chart</mat-icon>
+                Ligne
+              </mat-button-toggle>
+              <mat-button-toggle value="area">
+                <mat-icon>area_chart</mat-icon>
+                Aire
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas #chartCanvas></canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Indicateurs techniques -->
+      <div class="indicators-section">
+        <h3>Indicateurs Techniques</h3>
+        
+        <!-- RSI -->
+        <mat-card class="indicator-card">
+          <mat-card-content>
+            <div class="indicator-header">
+              <h4>RSI (14)</h4>
+              <div class="indicator-actions">
+                <span class="indicator-value" *ngIf="rsiData && rsiData.rsi">{{rsiData.rsi | number:'1.2-2'}}</span>
+                <button mat-icon-button 
+                        (click)="loadRSI()" 
+                        [disabled]="loadingRSI"
+                        matTooltip="Actualiser le RSI">
+                  <mat-spinner *ngIf="loadingRSI" diameter="20"></mat-spinner>
+                  <mat-icon *ngIf="!loadingRSI">refresh</mat-icon>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Avertissement données de démo -->
+            <div *ngIf="rsiData && rsiData.indicator && rsiData.indicator.includes('DEMO')" class="demo-warning">
+              <mat-icon>warning</mat-icon>
+              <div>
+                <strong>🎭 Données de démonstration</strong>
+                <p>Yahoo Finance a atteint sa limite de requêtes. Les données affichées sont des exemples réalistes.</p>
+              </div>
+            </div>
+            
+            <div *ngIf="!loadingRSI && !rsiData" class="indicator-unavailable">
+              <mat-icon>info</mat-icon>
+              <p>Données RSI temporairement indisponibles. Cliquez sur le bouton refresh pour réessayer.</p>
+            </div>
+
+            <div class="indicator-bar" *ngIf="rsiData && rsiData.rsi">
+              <div class="bar-background">
+                <div class="bar-fill" [style.width.%]="rsiData.rsi"></div>
+                <div class="bar-markers">
+                  <span class="marker" style="left: 30%">30</span>
+                  <span class="marker" style="left: 70%">70</span>
+                </div>
+              </div>
+            </div>
+            <div class="indicator-signal" *ngIf="rsiData">
+              <span class="signal-badge" [ngClass]="getRSISignal().class">
+                {{getRSISignal().text}}
+              </span>
+              <span class="signal-description">
+                <ng-container *ngIf="rsiData.rsi && rsiData.rsi > 70">Zone de surachat - Signal de vente potentiel</ng-container>
+                <ng-container *ngIf="rsiData.rsi && rsiData.rsi < 30">Zone de survente - Signal d'achat potentiel</ng-container>
+                <ng-container *ngIf="rsiData.rsi && rsiData.rsi >= 30 && rsiData.rsi <= 70">Zone neutre</ng-container>
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- MACD -->
+        <mat-card class="indicator-card">
+          <mat-card-content>
+            <div class="indicator-header">
+              <h4>MACD</h4>
+              <div class="indicator-actions">
+                <button mat-icon-button 
+                        (click)="loadMACD()" 
+                        [disabled]="loadingMACD"
+                        matTooltip="Actualiser le MACD">
+                  <mat-spinner *ngIf="loadingMACD" diameter="20"></mat-spinner>
+                  <mat-icon *ngIf="!loadingMACD">refresh</mat-icon>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Avertissement données de démo -->
+            <div *ngIf="macdData && macdData.indicator && macdData.indicator.includes('DEMO')" class="demo-warning">
+              <mat-icon>warning</mat-icon>
+              <div>
+                <strong>🎭 Données de démonstration</strong>
+                <p>Yahoo Finance a atteint sa limite de requêtes. Les données affichées sont des exemples réalistes.</p>
+              </div>
+            </div>
+            
+            <div *ngIf="!loadingMACD && !macdData" class="indicator-unavailable">
+              <mat-icon>info</mat-icon>
+              <p>Données MACD temporairement indisponibles. Cliquez sur le bouton refresh pour réessayer.</p>
+            </div>
+
+            <div class="macd-values" *ngIf="macdData">
+              <div class="macd-item">
+                <span class="label">MACD:</span>
+                <span class="value">{{macdData.macd | number:'1.4-4'}}</span>
+              </div>
+              <div class="macd-item">
+                <span class="label">Signal:</span>
+                <span class="value">{{macdData.macdSignal | number:'1.4-4'}}</span>
+              </div>
+              <div class="macd-item">
+                <span class="label">Histogram:</span>
+                <span class="value" [ngClass]="macdData.macdHist && macdData.macdHist > 0 ? 'positive' : 'negative'">
+                  {{macdData.macdHist && macdData.macdHist > 0 ? '+' : ''}}{{macdData.macdHist | number:'1.4-4'}}
+                </span>
+              </div>
+            </div>
+            <div class="indicator-signal" *ngIf="macdData">
+              <span class="signal-badge" [ngClass]="getMACDSignal().class">
+                {{getMACDSignal().text}}
+              </span>
+              <span class="signal-description">
+                <ng-container *ngIf="macdData.macd && macdData.macdSignal && macdData.macd > macdData.macdSignal">
+                  Croisement haussier - Momentum positif
+                </ng-container>
+                <ng-container *ngIf="macdData.macd && macdData.macdSignal && macdData.macd < macdData.macdSignal">
+                  Croisement baissier - Momentum négatif
+                </ng-container>
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Colonne droite : Métriques fondamentales -->
+    <div class="right-column">
+      <mat-card class="fundamentals-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>account_balance</mat-icon>
+            Métriques Fondamentales
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="loadingOverview" class="loading-section">
+            <mat-spinner diameter="30"></mat-spinner>
+            <p>Chargement des métriques...</p>
+          </div>
+
+          <div *ngIf="!loadingOverview && companyOverview" class="metrics-container">
+            
+            <!-- Valorisation -->
+            <div class="metric-section">
+              <h4>Valorisation</h4>
+              <div class="metric-grid">
+                <div class="metric-item">
+                  <span class="metric-label">Market Cap</span>
+                  <span class="metric-value">{{formatLargeNumber(companyOverview.marketCapitalization)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">P/E Ratio</span>
+                  <span class="metric-value">{{companyOverview.peRatio || 'N/A'}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">PEG Ratio</span>
+                  <span class="metric-value">{{companyOverview.pegRatio || 'N/A'}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Book Value</span>
+                  <span class="metric-value">${{companyOverview.bookValue || 'N/A'}}</span>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <!-- Rentabilité -->
+            <div class="metric-section">
+              <h4>Rentabilité</h4>
+              <div class="metric-grid">
+                <div class="metric-item">
+                  <span class="metric-label">EPS</span>
+                  <span class="metric-value">${{companyOverview.eps || 'N/A'}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">ROE</span>
+                  <span class="metric-value">{{formatPercentage(companyOverview.returnOnEquityTTM)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">ROA</span>
+                  <span class="metric-value">{{formatPercentage(companyOverview.returnOnAssetsTTM)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Profit Margin</span>
+                  <span class="metric-value">{{formatPercentage(companyOverview.profitMargin)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Operating Margin</span>
+                  <span class="metric-value">{{formatPercentage(companyOverview.operatingMarginTTM)}}</span>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <!-- Revenus -->
+            <div class="metric-section">
+              <h4>Revenus</h4>
+              <div class="metric-grid">
+                <div class="metric-item">
+                  <span class="metric-label">Revenue TTM</span>
+                  <span class="metric-value">{{formatLargeNumber(companyOverview.revenueTTM)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Gross Profit</span>
+                  <span class="metric-value">{{formatLargeNumber(companyOverview.grossProfitTTM)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">EBITDA</span>
+                  <span class="metric-value">{{formatLargeNumber(companyOverview.ebitda)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Revenue/Share</span>
+                  <span class="metric-value">${{companyOverview.revenuePerShareTTM || 'N/A'}}</span>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <!-- Dividendes -->
+            <div class="metric-section">
+              <h4>Dividendes</h4>
+              <div class="metric-grid">
+                <div class="metric-item">
+                  <span class="metric-label">Dividend Yield</span>
+                  <span class="metric-value">{{formatPercentage(companyOverview.dividendYield)}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Dividend/Share</span>
+                  <span class="metric-value">${{companyOverview.dividendPerShare || 'N/A'}}</span>
+                </div>
+                <div class="metric-item full-width">
+                  <span class="metric-label">Ex-Dividend Date</span>
+                  <span class="metric-value">{{companyOverview.exDividendDate || 'N/A'}}</span>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <!-- Trading -->
+            <div class="metric-section">
+              <h4>Trading</h4>
+              <div class="metric-grid">
+                <div class="metric-item">
+                  <span class="metric-label">52W High</span>
+                  <span class="metric-value">${{companyOverview.fiftyTwoWeekHigh || 'N/A'}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">52W Low</span>
+                  <span class="metric-value">${{companyOverview.fiftyTwoWeekLow || 'N/A'}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">MA 50</span>
+                  <span class="metric-value">${{companyOverview.fiftyDayMovingAverage || 'N/A'}}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">MA 200</span>
+                  <span class="metric-value">${{companyOverview.twoHundredDayMovingAverage || 'N/A'}}</span>
+                </div>
+                <div class="metric-item full-width">
+                  <span class="metric-label">Shares Outstanding</span>
+                  <span class="metric-value">{{companyOverview.sharesOutstanding ? (companyOverview.sharesOutstanding | number) : 'N/A'}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!loadingOverview && !companyOverview" class="no-data">
+            <mat-icon>info</mat-icon>
+            <p>Aucune donnée fondamentale disponible</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
