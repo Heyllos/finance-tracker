@@ -46,6 +46,7 @@ import { GoalDialogComponent } from './features/goals/goal-dialog/goal-dialog.co
 import { AlertsComponent } from './features/alerts/alerts.component';
 import { ForexComponent } from './features/forex/forex.component';
 import { CryptoComponent } from './features/crypto/crypto.component';
+import { StocksComponent } from './features/stocks/stocks.component';
 
 // Interceptors
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
@@ -66,7 +67,8 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
     GoalDialogComponent,
     AlertsComponent,
     ForexComponent,
-    CryptoComponent
+    CryptoComponent,
+    StocksComponent
   ],
   imports: [
     BrowserModule,

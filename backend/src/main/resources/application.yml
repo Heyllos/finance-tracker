@@ -44,6 +44,11 @@ jwt:
   expiration: ${JWT_EXPIRATION:86400000} # 24 heures en millisecondes
   refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 jours
 
+# Configuration Alpha Vantage API
+alphavantage:
+  api-key: ${ALPHAVANTAGE_API_KEY:K98FU4DNOF9UVH00}
+  base-url: https://www.alphavantage.co/query
+
 # Configuration du serveur
 server:
   port: ${SERVER_PORT:8080}
