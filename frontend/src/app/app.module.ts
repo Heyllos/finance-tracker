@@ -50,6 +50,8 @@ import { ForexComponent } from './features/forex/forex.component';
 import { CryptoComponent } from './features/crypto/crypto.component';
 import { StocksComponent } from './features/stocks/stocks.component';
 import { CurrencyConverterComponent } from './shared/components/currency-converter/currency-converter.component';
+import { PortfolioComponent } from './features/portfolio/portfolio.component';
+import { StockTransactionDialogComponent } from './features/portfolio/stock-transaction-dialog/stock-transaction-dialog.component';
 
 // Interceptors
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
@@ -75,7 +77,9 @@ registerLocaleData(localeFr);
     ForexComponent,
     CryptoComponent,
     StocksComponent,
-    CurrencyConverterComponent
+    CurrencyConverterComponent,
+    PortfolioComponent,
+    StockTransactionDialogComponent
   ],
   imports: [
     BrowserModule,

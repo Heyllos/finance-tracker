@@ -75,6 +75,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Goal> goals = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StockTransaction> stockTransactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PortfolioPosition> portfolioPositions = new ArrayList<>();
+
     // Constructeurs
     public User() {
     }
@@ -182,5 +188,21 @@ public class User {
 
     public void setGoals(List<Goal> goals) {
         this.goals = goals;
+    }
+
+    public List<StockTransaction> getStockTransactions() {
+        return stockTransactions;
+    }
+
+    public void setStockTransactions(List<StockTransaction> stockTransactions) {
+        this.stockTransactions = stockTransactions;
+    }
+
+    public List<PortfolioPosition> getPortfolioPositions() {
+        return portfolioPositions;
+    }
+
+    public void setPortfolioPositions(List<PortfolioPosition> portfolioPositions) {
+        this.portfolioPositions = portfolioPositions;
     }
 }

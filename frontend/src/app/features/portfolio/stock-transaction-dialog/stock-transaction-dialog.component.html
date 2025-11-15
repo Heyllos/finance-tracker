@@ -1,0 +1,99 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ type === StockTransactionType.BUY ? 'add_shopping_cart' : 'sell' }}</mat-icon>
+  {{ dialogTitle }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="transactionForm">
+    <!-- Symbol -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Symbole</mat-label>
+      <input matInput formControlName="symbol" placeholder="Ex: AAPL" [readonly]="!!position">
+      <button mat-icon-button matSuffix 
+              *ngIf="!position" 
+              (click)="searchStock()" 
+              [disabled]="searchingStock"
+              type="button">
+        <mat-icon>{{ searchingStock ? 'hourglass_empty' : 'search' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="transactionForm.get('symbol')?.hasError('required')">
+        Le symbole est obligatoire
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Company Name -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom de l'entreprise</mat-label>
+      <input matInput formControlName="companyName" placeholder="Ex: Apple Inc." [readonly]="!!position">
+      <mat-error *ngIf="transactionForm.get('companyName')?.hasError('required')">
+        Le nom est obligatoire
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Quantity -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Quantité</mat-label>
+      <input matInput type="number" formControlName="quantity" min="1" [max]="maxQuantity ?? null">
+      <mat-hint *ngIf="maxQuantity">Maximum: {{ maxQuantity }} actions</mat-hint>
+      <mat-error *ngIf="transactionForm.get('quantity')?.hasError('required')">
+        La quantité est obligatoire
+      </mat-error>
+      <mat-error *ngIf="transactionForm.get('quantity')?.hasError('min')">
+        La quantité doit être au minimum de 1
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Price Per Share -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Prix par action ($)</mat-label>
+      <input matInput type="number" formControlName="pricePerShare" step="0.01" min="0.01">
+      <mat-icon matPrefix>attach_money</mat-icon>
+      <mat-error *ngIf="transactionForm.get('pricePerShare')?.hasError('required')">
+        Le prix est obligatoire
+      </mat-error>
+      <mat-error *ngIf="transactionForm.get('pricePerShare')?.hasError('min')">
+        Le prix doit être supérieur à 0
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Fees -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Frais de transaction ($)</mat-label>
+      <input matInput type="number" formControlName="fees" step="0.01" min="0">
+      <mat-icon matPrefix>receipt</mat-icon>
+    </mat-form-field>
+
+    <!-- Transaction Date -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Date de transaction</mat-label>
+      <input matInput type="datetime-local" formControlName="transactionDate">
+      <mat-icon matPrefix>event</mat-icon>
+    </mat-form-field>
+
+    <!-- Notes -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Notes (optionnel)</mat-label>
+      <textarea matInput formControlName="notes" rows="3" maxlength="500"></textarea>
+      <mat-hint align="end">{{ transactionForm.get('notes')?.value?.length || 0 }}/500</mat-hint>
+    </mat-form-field>
+
+    <!-- Total -->
+    <div class="total-section">
+      <div class="total-label">Montant total :</div>
+      <div class="total-value">{{ calculateTotal() | number:'1.2-2':'fr-FR' }} $</div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">
+    Annuler
+  </button>
+  <button mat-raised-button 
+          [color]="type === StockTransactionType.BUY ? 'primary' : 'warn'"
+          (click)="onSubmit()" 
+          [disabled]="transactionForm.invalid || loading">
+    <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+    <span *ngIf="!loading">{{ submitButtonText }}</span>
+  </button>
+</mat-dialog-actions>
