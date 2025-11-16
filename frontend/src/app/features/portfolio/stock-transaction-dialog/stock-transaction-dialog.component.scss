@@ -1,0 +1,67 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #2d3748;
+  font-weight: 600;
+
+  mat-icon {
+    color: #667eea;
+  }
+}
+
+mat-dialog-content {
+  min-width: 500px;
+  padding: 24px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .full-width {
+      width: 100%;
+    }
+
+    .total-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+
+      .total-label {
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .total-value {
+        font-size: 28px;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  gap: 12px;
+
+  button {
+    min-width: 100px;
+  }
+}
+
+// Responsive
+@media (max-width: 600px) {
+  mat-dialog-content {
+    min-width: auto;
+    width: 100%;
+    padding: 16px;
+  }
+}

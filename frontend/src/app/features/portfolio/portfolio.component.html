@@ -1,0 +1,235 @@
+<div class="portfolio-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>
+      <mat-icon>account_balance_wallet</mat-icon>
+      Mon Portefeuille d'Actions
+    </h1>
+    <div class="header-actions">
+      <button mat-raised-button color="accent" (click)="refreshPrices()" [disabled]="refreshingPrices">
+        <mat-icon>refresh</mat-icon>
+        {{ refreshingPrices ? 'Actualisation...' : 'Actualiser les prix' }}
+      </button>
+      <button mat-raised-button color="primary" (click)="openBuyDialog()">
+        <mat-icon>add_shopping_cart</mat-icon>
+        Acheter des actions
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement du portefeuille...</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div *ngIf="!loading && summary" class="summary-cards">
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="card-icon invested">
+          <mat-icon>savings</mat-icon>
+        </div>
+        <div class="card-info">
+          <div class="card-label">Total Investi</div>
+          <div class="card-value">{{ summary.totalInvested | number:'1.2-2':'fr-FR' }} €</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="card-icon current">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+        <div class="card-info">
+          <div class="card-label">Valeur Actuelle</div>
+          <div class="card-value">{{ summary.currentValue | number:'1.2-2':'fr-FR' }} €</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="card-icon" [ngClass]="getGainLossClass(summary.totalGainLoss)">
+          <mat-icon>{{ getGainLossIcon(summary.totalGainLoss) }}</mat-icon>
+        </div>
+        <div class="card-info">
+          <div class="card-label">Plus/Moins-value</div>
+          <div class="card-value" [ngClass]="getGainLossClass(summary.totalGainLoss)">
+            {{ summary.totalGainLoss | number:'1.2-2':'fr-FR' }} €
+            <span class="percent">({{ summary.totalGainLossPercent | number:'1.2-2':'fr-FR' }}%)</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="card-icon positions">
+          <mat-icon>pie_chart</mat-icon>
+        </div>
+        <div class="card-info">
+          <div class="card-label">Positions</div>
+          <div class="card-value">{{ summary.numberOfPositions }}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Top Performers -->
+  <div *ngIf="!loading && summary && (summary.topGainers.length > 0 || summary.topLosers.length > 0)" class="performers-section">
+    <div class="performers-container">
+      <!-- Top Gainers -->
+      <mat-card *ngIf="summary.topGainers.length > 0" class="performers-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="positive">trending_up</mat-icon>
+            Top Gains
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngFor="let gainer of summary.topGainers" class="performer-item">
+            <div class="performer-symbol">{{ gainer.symbol }}</div>
+            <div class="performer-name">{{ gainer.companyName }}</div>
+            <div class="performer-value positive">
+              +{{ gainer.gainLossPercent | number:'1.2-2':'fr-FR' }}%
+              <span class="amount">(+{{ gainer.gainLoss | number:'1.2-2':'fr-FR' }} €)</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Top Losers -->
+      <mat-card *ngIf="summary.topLosers.length > 0" class="performers-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="negative">trending_down</mat-icon>
+            Top Pertes
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngFor="let loser of summary.topLosers" class="performer-item">
+            <div class="performer-symbol">{{ loser.symbol }}</div>
+            <div class="performer-name">{{ loser.companyName }}</div>
+            <div class="performer-value negative">
+              {{ loser.gainLossPercent | number:'1.2-2':'fr-FR' }}%
+              <span class="amount">({{ loser.gainLoss | number:'1.2-2':'fr-FR' }} €)</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Positions Table -->
+  <mat-card *ngIf="!loading && positions.length > 0" class="positions-card">
+    <mat-card-header>
+      <mat-card-title>Mes Positions</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="positions" class="positions-table">
+        
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell *matHeaderCellDef>Symbole</th>
+          <td mat-cell *matCellDef="let position">
+            <div class="symbol-cell">
+              <strong>{{ position.symbol }}</strong>
+              <span class="company-name">{{ position.companyName }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Quantity Column -->
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantité</th>
+          <td mat-cell *matCellDef="let position">
+            {{ position.totalQuantity }}
+          </td>
+        </ng-container>
+
+        <!-- Average Price Column -->
+        <ng-container matColumnDef="averagePrice">
+          <th mat-header-cell *matHeaderCellDef>PRU</th>
+          <td mat-cell *matCellDef="let position">
+            {{ position.averageBuyPrice | number:'1.2-4':'fr-FR' }} $
+          </td>
+        </ng-container>
+
+        <!-- Current Price Column -->
+        <ng-container matColumnDef="currentPrice">
+          <th mat-header-cell *matHeaderCellDef>Prix Actuel</th>
+          <td mat-cell *matCellDef="let position">
+            <span *ngIf="position.currentPrice">{{ position.currentPrice | number:'1.2-4':'fr-FR' }} $</span>
+            <span *ngIf="!position.currentPrice" class="no-data">-</span>
+          </td>
+        </ng-container>
+
+        <!-- Value Column -->
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>Valeur</th>
+          <td mat-cell *matCellDef="let position">
+            <div class="value-cell">
+              <div class="invested">Investi: {{ position.totalInvested | number:'1.2-2':'fr-FR' }} €</div>
+              <div class="current" *ngIf="position.currentValue">
+                Actuel: {{ position.currentValue | number:'1.2-2':'fr-FR' }} €
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Gain/Loss Column -->
+        <ng-container matColumnDef="gainLoss">
+          <th mat-header-cell *matHeaderCellDef>+/- Value</th>
+          <td mat-cell *matCellDef="let position">
+            <div *ngIf="position.gainLoss !== null && position.gainLoss !== undefined" 
+                 class="gain-loss-cell" 
+                 [ngClass]="getGainLossClass(position.gainLoss)">
+              <mat-icon>{{ getGainLossIcon(position.gainLoss) }}</mat-icon>
+              <div class="gain-loss-values">
+                <div class="amount">{{ position.gainLoss | number:'1.2-2':'fr-FR' }} €</div>
+                <div class="percent">{{ position.gainLossPercent | number:'1.2-2':'fr-FR' }}%</div>
+              </div>
+            </div>
+            <span *ngIf="position.gainLoss === null || position.gainLoss === undefined" class="no-data">-</span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let position">
+            <button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openSellDialog(position)">
+                <mat-icon>sell</mat-icon>
+                <span>Vendre</span>
+              </button>
+              <button mat-menu-item (click)="openBuyDialog()">
+                <mat-icon>add_shopping_cart</mat-icon>
+                <span>Acheter plus</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && positions.length === 0" class="empty-state">
+    <mat-icon>account_balance_wallet</mat-icon>
+    <h2>Votre portefeuille est vide</h2>
+    <p>Commencez par acheter vos premières actions</p>
+    <button mat-raised-button color="primary" (click)="openBuyDialog()">
+      <mat-icon>add_shopping_cart</mat-icon>
+      Acheter des actions
+    </button>
+  </div>
+</div>

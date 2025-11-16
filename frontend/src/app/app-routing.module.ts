@@ -12,6 +12,7 @@ import { AlertsComponent } from './features/alerts/alerts.component';
 import { ForexComponent } from './features/forex/forex.component';
 import { CryptoComponent } from './features/crypto/crypto.component';
 import { StocksComponent } from './features/stocks/stocks.component';
+import { PortfolioComponent } from './features/portfolio/portfolio.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
@@ -31,7 +32,8 @@ const routes: Routes = [
       { path: 'alerts', component: AlertsComponent },
       { path: 'forex', component: ForexComponent },
       { path: 'crypto', component: CryptoComponent },
-      { path: 'stocks', component: StocksComponent }
+      { path: 'stocks', component: StocksComponent },
+      { path: 'portfolio', component: PortfolioComponent }
     ]
   },
   { path: '**', redirectTo: '/dashboard' }
