@@ -31,6 +31,8 @@ logs/
 .env.production
 .env.test
 .envrc
+# Mais on garde .env.example pour la documentation
+!.env.example
 
 # -----------------------
 # Java / Spring Boot
@@ -90,3 +92,10 @@ coverage/
 *.sqlite3
 *.db
 *.db-journal
+
+# -----------------------
+# Docker
+# -----------------------
+docker-images/
+*.tar
+.env
